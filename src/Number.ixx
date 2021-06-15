@@ -50,40 +50,26 @@ public:
 		radix = otherNumber.radix;
 	}
 
-	/*
-	const std::vector<bool>& getNegatives() const
-	{ return const_cast<std::vector<bool>&>(isNegative); }
+	//Number operator+(const Number& addend) const
+	//{
+	//	Number sum{std::max(addend.digits.size(), digits.size())};
 
-	bool getNegative(std::size_t index) const
-	{ return isNegative[index]; }
+	//	int end = std::min(addend.digits.size(), digits.size());
+	//	for (std::size_t index = 0;index < end; index++)
+	//	{
+	//		if(index % 2 == 0)
+	//			//if signs math to addition is signs dont match to subtraction
+	//			
+	//		
+	//	}
+	//}
 
-	const std::vector<std::string>& getDigitsRaw() const
-	{ return const_cast<std::vector<std::string>&>(digits);}
+	//Number operator-(const Number& other) const
+	//{
 
-	const std::string& getDigitsSectionRaw(std::size_t index) const
-	{
-		return const_cast<std::string&>(digits[index]);
-	} */
+	//}
 
-	Number operator+(const Number& addend) const
-	{
-		Number sum{std::max(addend.digits.size(), digits.size())};
-
-		int end = std::min(addend.digits.size(), digits.size());
-		for (std::size_t index = 0;index < end; index++)
-		{
-			if(index % 2 == 0)
-				//if signs math to addition is signs dont match to subtraction
-				
-			
-		}
-	}
-
-	Number operator-(const Number& other) const
-	{
-
-	}
-
+private:
 	std::tuple<std::string, unsigned char> addSegment(const std::string& addendA, const std::string& addendB)
 	{
 		std::string largerString, smallerString, output;
@@ -105,9 +91,49 @@ public:
 		return std::make_tuple(output, carry);
 	}
 
-	std::tuple<std::string, bool> subtractSegment(const std::string& subtractendA, const std::string& subtractendB)
+public:
+	std::tuple<std::string, bool, unsigned char> subtractSegment(const std::string& subtractendA, const std::string& subtractendB)
 	{
-		bool negativeOutput = subtractendB.size() > subtractendA.size();
+		std::string largerString, smallerString, output;
+		bool isNegative = subtractendB.size() > subtractendA.size();
+
+		if (subtractendA.size() == subtractendB.size())
+		{
+			int index = subtractendA.size() - 1;
+			while (index >= 0 && subtractendA[index] == subtractendB[index])
+				index--;
+
+			if (index >= 0)
+			{
+				subtractendA[index] < subtractendB[index] ? (smallerString = subtractendA, largerString = subtractendB, isNegative = true)
+					: (smallerString = subtractendB, largerString = subtractendA, isNegative = false);
+			}
+			else
+				return std::make_tuple(std::string{ 0 }, false, 0);
+		}
+		else
+			subtractendA.size() < subtractendB.size() ? (smallerString = subtractendA, largerString = subtractendB) : (smallerString = subtractendB, largerString = subtractendA);
+
+		signed char carry = 0;
+		std::size_t index = 0;
+		for (; index < smallerString.size(); index++)
+		{
+			int s = largerString[index] - (carry > 0? carry-- : 0);
+		
+			if (s < smallerString[index])
+			{
+				carry++;
+				s += 100; //should add the radix * 10
+			}
+
+			output += (unsigned char) s - smallerString[index];
+		}
+
+		for (; index < largerString.size(); index++)
+			output += largerString[index] - (carry > 0 ? carry-- : 0);
+		
+
+		return std::make_tuple(output, isNegative, carry);
 	}
 };
 
