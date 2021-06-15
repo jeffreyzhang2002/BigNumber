@@ -91,7 +91,6 @@ private:
 		return std::make_tuple(output, carry);
 	}
 
-public:
 	std::tuple<std::string, bool, unsigned char> subtractSegment(const std::string& subtractendA, const std::string& subtractendB)
 	{
 		std::string largerString, smallerString, output;

@@ -46,5 +46,7 @@ public:
 		}
 	}
 
+	Integer() : Integer(0) {};
+
 
 };
