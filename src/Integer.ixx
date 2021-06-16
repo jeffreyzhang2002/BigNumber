@@ -48,5 +48,5 @@ public:
 
 	Integer() : Integer(0) {};
 
-
+	Integer(const Number& value) : Number(1, value) {}
 };

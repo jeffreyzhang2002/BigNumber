@@ -39,4 +39,8 @@ public:
 	}
 
 	Rational(FloatingPointType auto value) : Rational(std::to_string(value)) { }
+
+	Rational() : Rational(0.0) {}
+
+	Rational(const Number& value) : Number(2, value) {}
 };

@@ -49,16 +49,16 @@ int main()
 	addend2 += y;
 	//addend2 += z;
 	
-	print(addend1);
-	print(addend2);
+	//print(addend1);
+	//print(addend2);
 
-	auto tuple = n.subtractSegment(addend1, addend2);
+	//auto tuple = n.subtractSegment(addend1, addend2);
 
-	print(std::get<0>(tuple));
-	std::cout << (int) std::get<1>(tuple) << "\n";
-	std::cout << (int) std::get<2>(tuple) << "\n";
-	
-	
-	
-	std::cin.get();
+	//print(std::get<0>(tuple));
+	//std::cout << (int) std::get<1>(tuple) << "\n";
+	//std::cout << (int) std::get<2>(tuple) << "\n";
+	//
+	//
+	//
+	//std::cin.get();
 }

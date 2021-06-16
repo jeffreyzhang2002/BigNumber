@@ -40,6 +40,16 @@ protected:
 			digits[destination] += sum;
 	}
 
+	Number(unsigned int numberFormat, const Number& other)
+	{
+		for (unsigned int index = 0; index < numberFormat; index++)
+		{
+			digits[index] = other.digits[index];
+			if (index % 2 == 0)
+				isNegative[index / 2] = other.isNegative[index / 2];
+		}
+	}
+
 public:
 	Number(unsigned int numberFormat) : digits(numberFormat, std::string{ "" }), isNegative((numberFormat - 1)/2 + 1, false), radix(10) {}
 
@@ -49,25 +59,6 @@ public:
 		isNegative = otherNumber.isNegative;
 		radix = otherNumber.radix;
 	}
-
-	//Number operator+(const Number& addend) const
-	//{
-	//	Number sum{std::max(addend.digits.size(), digits.size())};
-
-	//	int end = std::min(addend.digits.size(), digits.size());
-	//	for (std::size_t index = 0;index < end; index++)
-	//	{
-	//		if(index % 2 == 0)
-	//			//if signs math to addition is signs dont match to subtraction
-	//			
-	//		
-	//	}
-	//}
-
-	//Number operator-(const Number& other) const
-	//{
-
-	//}
 
 private:
 	std::tuple<std::string, unsigned char> addSegment(const std::string& addendA, const std::string& addendB)
