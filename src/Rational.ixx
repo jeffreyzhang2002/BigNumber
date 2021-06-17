@@ -35,7 +35,7 @@ public:
 		std::size_t index = value.find('.');
 
 		Number::stringParser(value, 0, offsetFront, index);
-		Number::stringParser(value, 1, index + 1, last);
+		Number::stringParser(value, 1, index + 1, last, false);
 	}
 
 	Rational(FloatingPointType auto value) : Rational(std::to_string(value)) { }

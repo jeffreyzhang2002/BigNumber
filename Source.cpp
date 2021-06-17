@@ -17,48 +17,15 @@ void print(const std::string& number)
 
 int main()
 {
-	//Number n = Rational{ "012345.678900" };
+	//Integer n{ "12345" };
+	Rational b{ "13.8102" };
+
+	Rational c{ "212.981" };
 	
-	unsigned int val = 1342543;
-	Number n = Integer{ val };
-	
-	/*std::cout << "Parsed!" << "\n";
-	std::cout << to_string_raw(n) << "\n";*/
+	//std::cout << to_string_raw(n) << "\n";
+	std::cout << to_string_raw(b) << "\n";
 
-	char a = 0;
-	char b = 0;
-	char c = 43;
-	char d = 99;
+	std::cout << to_string_raw(c) << "\n";
 
-	char v = 99;
-	char w = 99;
-	char x = 99;
-	char y = 50;
-	char z = 99;
-
-	std::string addend1{};
-	addend1 += a;
-	addend1 += b;
-	addend1 += c;
-	addend1 += d;
-
-	std::string addend2{};
-	addend2 += v;
-	addend2 += w;
-	addend2 += x;
-	addend2 += y;
-	//addend2 += z;
-	
-	//print(addend1);
-	//print(addend2);
-
-	//auto tuple = n.subtractSegment(addend1, addend2);
-
-	//print(std::get<0>(tuple));
-	//std::cout << (int) std::get<1>(tuple) << "\n";
-	//std::cout << (int) std::get<2>(tuple) << "\n";
-	//
-	//
-	//
-	//std::cin.get();
+	std::cin.get();
 }

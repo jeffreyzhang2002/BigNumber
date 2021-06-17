@@ -16,33 +16,56 @@ protected:
 	std::vector<bool> isNegative;
 	int radix;
 
-	void stringParser(const std::string& value, unsigned int destination, unsigned int start, unsigned int end)
+	void stringParser(const std::string& value, unsigned int destination, unsigned int start, unsigned int end, bool alignedLeft = true)
 	{
 		char sum = 0;
 		bool next = false;
 
-		for (int index = (int)(end - 1); index >= (int)start; index--)
+		if (alignedLeft)
 		{
-			if (std::isdigit(value[index]))
-				sum += (value[index] - '0') * (next ? 10 : 1);
-			else
-				throw - 1;
-
-			if (next)
+			for (int index = (int)(end - 1); index >= (int)start; index--)
 			{
-				digits[destination] += sum;
-				sum = 0;
-			}
-			next = !next;
-		}
+				if (std::isdigit(value[index]))
+					sum += (value[index] - '0') * (next ? 10 : 1);
+				else
+					throw - 1;
 
-		if (sum > 0)
-			digits[destination] += sum;
+				if (next)
+				{
+					digits[destination] += sum;
+					sum = 0;
+				}
+				next = !next;
+			}
+			if (sum > 0)
+				digits[destination] += sum;
+		}
+		else
+		{
+			for (int index = start; index < (int)end; index++)
+			{
+				if (std::isdigit(value[index]))
+					sum += (value[index] - '0') * (next ? 1 : 10);
+				else
+					throw - 1;
+
+				if (next)
+				{
+					digits[destination] += sum;
+					sum = 0;
+				}
+				next = !next;
+			}
+			if (sum > 0)
+				digits[destination] += sum;
+			std::reverse(digits[destination].begin(), digits[destination].end());
+		}
+		
 	}
 
-	Number(unsigned int numberFormat, const Number& other)
+	Number(unsigned int numberFormat, const Number& other) : Number(numberFormat)
 	{
-		for (unsigned int index = 0; index < numberFormat; index++)
+		for (unsigned int index = 0; index < std::min(numberFormat, other.digits.size()); index++)
 		{
 			digits[index] = other.digits[index];
 			if (index % 2 == 0)
@@ -60,14 +83,42 @@ public:
 		radix = otherNumber.radix;
 	}
 
+	Number operator+(const Number& addend) const
+	{
+		unsigned int max = std::max(addend.digits.size(), digits.size());
+		unsigned char carry = 0;
+
+		Number sum{ max };
+
+		for (int index = max - 1; index >= 0; index--)
+		{
+			if (index < addend.digits.size() && index < digits.size())
+			{
+				std::tuple<std::string, unsigned char> s = addSegment(addend.digits[index], digits[index], carry);
+				sum.digits[index] = std::get<0>(s);
+				carry = std::get<1>(s);
+			
+				if (index % 2 == 0)
+				{
+					sum.digits[index] = (char)carry + sum.digits[index];
+					carry = 0;
+				}
+			}
+			else if (index < digits.size())
+				sum.digits[index] = addend.digits[index];
+			else
+				sum.digits[index] = digits[index];
+		}
+	}
+
+
 private:
-	std::tuple<std::string, unsigned char> addSegment(const std::string& addendA, const std::string& addendB)
+	std::tuple<std::string, unsigned char> addSegment(const std::string& addendA, const std::string& addendB, unsigned char carry = 0) const
 	{
 		std::string largerString, smallerString, output;
 
 		addendA.size() < addendB.size() ? (smallerString = addendA, largerString = addendB) : (smallerString = addendB, largerString = addendA);
 
-		unsigned char carry = 0;
 		for (std::size_t index = 0; index < largerString.size(); index++)
 		{
 			unsigned char sum = (index < smallerString.size()? (unsigned char) smallerString[index] : 0) + (unsigned char)largerString[index] + (carry > 0? (unsigned char)carry-- : 0);
@@ -82,7 +133,7 @@ private:
 		return std::make_tuple(output, carry);
 	}
 
-	std::tuple<std::string, bool, unsigned char> subtractSegment(const std::string& subtractendA, const std::string& subtractendB)
+	std::tuple<std::string, bool, unsigned char> subtractSegment(const std::string& subtractendA, const std::string& subtractendB) const
 	{
 		std::string largerString, smallerString, output;
 		bool isNegative = subtractendB.size() > subtractendA.size();
