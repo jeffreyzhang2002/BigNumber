@@ -83,36 +83,52 @@ public:
 		radix = otherNumber.radix;
 	}
 
-	Number operator+(const Number& addend) const
-	{
-		unsigned int max = std::max(addend.digits.size(), digits.size());
-		unsigned char carry = 0;
+	//Number operator+(const Number& addend) const
+	//{
+	//	unsigned int max = std::max(addend.digits.size(), digits.size());
+	//	unsigned char carry = 0;
 
-		Number sum{ max };
+	//	Number sum{ max };
 
-		for (int index = max - 1; index >= 0; index--)
-		{
-			if (index < addend.digits.size() && index < digits.size())
-			{
-				std::tuple<std::string, unsigned char> s = addSegment(addend.digits[index], digits[index], carry);
-				sum.digits[index] = std::get<0>(s);
-				carry = std::get<1>(s);
-			
-				if (index % 2 == 0)
-				{
-					sum.digits[index] = (char)carry + sum.digits[index];
-					carry = 0;
-				}
-			}
-			else if (index < digits.size())
-				sum.digits[index] = addend.digits[index];
-			else
-				sum.digits[index] = digits[index];
-		}
-	}
-
+	//	for (unsigned int index = 0; index < max; index += 2)
+	//	{
+	//		if (index < addend.digits.size() && index < digits.size())
+	//		{
+	//			
+	//		}
+	//	}		
+	//}
 
 private:
+	bool greaterThanSegment(const Number& comparedNumber, unsigned int index) const
+	{
+		if (digits[index].size() == comparedNumber.digits[index].size())
+		{
+			for (int i = 0; i < digits[index].size(); i++)
+				if (digits[index][i] > comparedNumber.digits[index][i])
+					return true;
+			return false;
+		}
+		return digits[index].size() > comparedNumber.digits[index].size();
+	}
+
+	bool lessThanSegment(const Number& comparedNumber, unsigned int index) const
+	{
+		if (digits[index].size() == comparedNumber.digits[index].size())
+		{
+			for (int i = 0; i < digits[index].size(); i++)
+				if (digits[index][i] < comparedNumber.digits[index][i])
+					return true;
+			return false;
+		}
+		return digits[index].size() < comparedNumber.digits[index].size();
+	}
+
+	bool equalToSegment(const Number& comparedNumber, unsigned int index) const
+	{
+		return (digits[index] != comparedNumber.digits[index]);
+	}
+
 	std::tuple<std::string, unsigned char> addSegment(const std::string& addendA, const std::string& addendB, unsigned char carry = 0) const
 	{
 		std::string largerString, smallerString, output;
@@ -175,6 +191,29 @@ private:
 		
 
 		return std::make_tuple(output, isNegative, carry);
+	}
+
+	void addSegmentHelper(const Number& addend, unsigned int index, Number& returnedNumber) const
+	{
+		if (addend.isNegative[index / 2] == isNegative[index / 2])
+		{
+			unsigned char carry = 0;
+
+			if (index + 1 < addend.digits.size())
+			{
+				std::tuple<std::string, unsigned char> s1 = addSegment(addend.digits[index + 1], digits[index + 1], carry);
+				returnedNumber.digits[index + 1] = std::get<0>(s1);
+				carry = std::get<1>(s1);
+			}
+	
+			std::tuple<std::string, unsigned char> s2 = addSegment(addend.digits[index], digits[index], carry);
+			returnedNumber.digits[index] = (std::get<1>(s2) != 0) ? ((char)std::get<1>(s2) + std::get<0>(s2)) : std::get<0>(s2);
+			returnedNumber.isNegative[index / 2] = addend.isNegative[index / 2];
+		}
+		else
+		{
+			// not sure yet
+		}
 	}
 };
 
