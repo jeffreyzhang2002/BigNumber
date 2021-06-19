@@ -65,7 +65,7 @@ protected:
 
 	Number(unsigned int numberFormat, const Number& other) : Number(numberFormat)
 	{
-		for (unsigned int index = 0; index < std::min(numberFormat, other.digits.size()); index++)
+		for (unsigned int index = 0; index < std::min(numberFormat, (unsigned int)other.digits.size()); index++)
 		{
 			digits[index] = other.digits[index];
 			if (index % 2 == 0)
