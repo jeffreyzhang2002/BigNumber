@@ -20,10 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\BigNumber.ixx" />
-    <ClCompile Include="src\Integer.ixx" />
-    <ClCompile Include="src\Number.ixx" />
     <ClCompile Include="Source.cpp" />
-    <ClCompile Include="src\Rational.ixx" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
