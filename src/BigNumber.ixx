@@ -14,7 +14,6 @@ private:
 	bool isNegative = false;
 	
 public:
-
 	Number(const char* value) : Number(std::string{ value }) {}
 
 	Number(const std::string& value)
@@ -52,7 +51,6 @@ private:
 
 			if (groupSum > 0)
 				digits[destination].push_back(groupSum);
-
 		}
 	}
 };
