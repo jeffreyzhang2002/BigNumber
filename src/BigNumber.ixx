@@ -96,6 +96,10 @@ public:
 			throw std::invalid_argument("value can only contain numbers,  a single decimal point and +/- at the beginning");
 	}
 
-	template<typename V> requires std::is_arithmetic_v<V> Number(V value) : Number(std::to_string(value)){
+	template<typename V> requires std::is_arithmetic_v<V> Number(V value) : Number(std::to_string(value)){}
+
+	Number operator+(const Number& addend)
+	{
+
 	}
 };
