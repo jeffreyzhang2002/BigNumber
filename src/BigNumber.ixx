@@ -89,6 +89,43 @@ private:
 			digits[destination].push_back(groupSum);
 	}
 
+	Number<T> addHelper(const Number<T>& addend, bool negative) const
+	{
+		Number<T> sum{};
+		T carry = 0;
+		T maxDigitSize = (T)std::pow(10, countDigits());
+
+		for (std::size_t group = 2; group-- > 0;)
+		{
+			std::size_t addendSize = addend.digits[group].size(), thisSize = digits[group].size(), length = std::max(addend.digits[group].size(), digits[group].size());
+			sum.digits[group] = std::vector<T>(length, (T)0);
+
+			for (std::size_t index = (group == 1) ? length : 0; (group == 1) ? index-- > 0: index < length; (group == 1) ? 0 : index++)
+			{
+				if (index < addendSize && index < thisSize)
+				{
+					T currentsum = digits[group][index] + addend.digits[group][index] + ((carry > 0) ? carry-- : 0);
+					if (currentsum > maxDigitSize - 1)
+					{
+						carry += currentsum / maxDigitSize;
+						currentsum %= maxDigitSize;
+					}
+					sum.digits[group][index] = currentsum;
+				}
+				else if (index < addendSize)
+					sum.digits[group][index] = addend.digits[group][index];
+				else
+					sum.digits[group][index] = digits[group][index];
+			}
+		}
+		if (carry > 0)
+			sum.digits[0].push_back(carry);
+
+		sum.isNegative = negative;
+
+		return sum;
+	}
+
 public:
 	Number() { }
 	
@@ -121,40 +158,80 @@ public:
 
 	template<typename V> requires std::is_arithmetic_v<V> Number(V value) : Number(std::to_string(value)){}
 
-	Number add(const Number<T>& addend) const {
-		Number<T> sum{};
-		T carry = 0;
-		T maxDigitSize = (T)std::pow(10, countDigits());
+	Number<T> add(const Number<T>& addend) const {
+		//if (addend.isNegative == isNegative)
+			return addHelper(addend, addend.isNegative);
+		//else
 
-		for (std::size_t group = 2; group-- > 0;)
-		{
-			std::size_t addendSize = addend.digits[group].size(), thisSize = digits[group].size(), length = std::max(addend.digits[group].size(), digits[group].size());
-			sum.digits[group] = std::vector<T>(length, (T)0);
-
-			for (std::size_t index = (group == 1) ? length : 0; (group == 1) ? index-- > 0: index < length; (group == 1) ? 0 : index++)
-			{
-				if (index < addendSize && index < thisSize)
-				{
-					T currentsum = digits[group][index] + addend.digits[group][index] + ((carry > 0) ? carry-- : 0);
-					if (currentsum > maxDigitSize - 1)
-					{
-						carry += currentsum / maxDigitSize;
-						currentsum %= maxDigitSize;
-					}
-					sum.digits[group][index] = currentsum;
-				}
-				else if (index < addendSize)
-					sum.digits[group][index] = addend.digits[group][index];
-				else
-					sum.digits[group][index] = digits[group][index];
-			}
-		}
-		if (carry > 0)
-			sum.digits[0].push_back(carry);
-
-		return sum;
 	}
 
-	Number operator+(const Number<T>& addend) const
+	Number<T> subtract(const Number<T> subtractend) const {
+		//if (addend.isNegative != isNegative)
+			return addHelper(subtractend, isNegative);
+		//else
+	}
+
+	Number<T> operator+(const Number<T>& addend) const
 	{ return add(addend); }
+
+	Number<T> operator-(const Number<T>& subtractend) const {
+		return subtract(subtractend);
+	}
+
+	Number operator-() const {
+		Number<T> inverse = *this;
+		inverse.isNegative = !inverse.isNegative;
+		return inverse;
+	}
+
+	int operator<=>(const Number<T>& other) const {
+		if (other.digits[0].size() > digits[0].size())
+			return 1;
+		else if (other.digits[0].size() < digits[0].size())
+			return -1;
+		else
+		{
+			for (std::size_t index = other.digits[0].size(); index-- > 0;) {
+				if (other.digits[0][index] > digits[0][index])
+					return 1;
+				else if (other.digits[0][index] < digits[0][index])
+					return -1;
+			}
+
+			for (std::size_t index = 0, min = std::min(other.digits[1].size(), digits[1].size()); index < min; index++)
+			{
+				if (other.digits[0][index] > digits[0][index])
+					return 1;
+				else if (other.digits[0][index] < digits[0][index])
+					return -1;
+			}
+
+			if (other.digits[1].size() == digits[1].size())
+				return 0;
+			return other.digits[1].size() < digits[1].size();
+		}
+	}
+
+	bool operator<(const Number<T>& other) const {
+		return operator<=>(other) < 0;
+	}
+
+	bool operator>(const Number<T>& other) const {
+		return operator<=>(other) > 0;
+	}
+
+	bool operator<=(const Number<T>& other) const {
+		int result = operator<=>(other);
+		return result < 0 || result == 0;
+	}
+
+	bool operator>=(const Number<T>& other) const {
+		int result = operator<=>(other);
+		return result > 0 || result == 0;
+	}
+
+	bool operator==(const Number<T>& other) const 
+	{
+		return operator<=>(other) == 0;
+	}
 };
